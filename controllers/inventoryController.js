@@ -33,7 +33,28 @@ const inventoryIndexByUserId = async (req, res) => {
   }
 };
 
+//function to update existing inventory item
+const inventoryUpdate = async (req, res) => {
+  const { inventoryId } = req.params;
+  const data = req.body;
+  try {
+    // Find the inventory item with inventoryId
+    const prevInventoryItem = await Inventory.findById(inventoryId);
+
+    if (!prevInventoryItem) {
+      return res.status(404).json({ error: "Inventory item not found" });
+    }
+    Object.assign(prevInventoryItem, data);
+    const updatedInventoryItem = await prevInventoryItem.save();
+    res.json(updatedInventoryItem);
+  } catch (error) {
+    console.error("Error in inventoryUpdate", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   createInventory,
   inventoryIndexByUserId,
+  inventoryUpdate,
 };
