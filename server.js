@@ -15,6 +15,7 @@ const path = require("path");
 
 // routers
 const usersRouter = require("./routes/usersRouter");
+const purchasesRouter = require("./routes/purchasesRouter");
 
 app.use(
   cors({
@@ -24,7 +25,9 @@ app.use(
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "dist")));
 
+app.use(require("./config/checkToken"));
 app.use("/api/users", usersRouter);
+app.use("/api/purchases", purchasesRouter);
 
 //catch all function
 app.get("/*", function (req, res) {

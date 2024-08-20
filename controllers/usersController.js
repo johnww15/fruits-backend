@@ -14,12 +14,18 @@ function createJWT(user) {
 //signup function
 const userSignup = async (req, res) => {
   try {
-    // Add the user to the db
+    // Check if email already exists
+    const existingUser = await User.findOne({ email: req.body.email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email is already in use." });
+    }
+
+    // If the email is not taken, create the user
     const user = await User.create(req.body);
     const token = createJWT(user);
     res.json(token);
   } catch (err) {
-    res.status(400).json(err);
+    res.status(400).json({ message: err.message || "An error occurred." });
   }
 };
 

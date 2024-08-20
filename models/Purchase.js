@@ -17,6 +17,8 @@ const purchaseSchema = new Schema(
       required: true,
       default: 0,
       min: [0, "Price must be positive"],
+      set: (value) => parseFloat(value.toFixed(2)),
+      get: (value) => value.toFixed(2),
     },
     isPaid: {
       type: Boolean,
@@ -42,11 +44,13 @@ const purchaseSchema = new Schema(
     inventoryId: {
       type: Schema.Types.ObjectId,
       ref: "Inventory",
-      required: true,
+      // required: true,
     },
   },
   {
     timestamps: true,
+    toJSON: { getters: true },
+    toObject: { getters: true },
   }
 );
 
