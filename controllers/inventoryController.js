@@ -4,8 +4,8 @@ const USERID = "66c4d08f9b400680a4144e94"; //(shop) to be changed later on
 
 //function to create inventory
 const createInventory = async (req, res) => {
-  const data = req.body;
-  console.log("createInventory running (data)", data);
+  const userId = req.user._id;
+  const data = { ...req.body, userId };
   try {
     const newInventory = await Inventory.create(data);
     res.json(newInventory);
@@ -17,8 +17,8 @@ const createInventory = async (req, res) => {
 
 //function to get inventory of a specific userId
 const inventoryIndexByUserId = async (req, res) => {
+  const userId = req.user._id;
   try {
-    const userId = req.user._id;
     // Find all inventory items that have the specified userId
     const inventoryItems = await Inventory.find({ userId: userId }).exec();
 
