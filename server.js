@@ -32,8 +32,8 @@ app.use("/api/purchases", purchasesRouter);
 app.use("/api/inventory", inventoryRouter);
 
 //catch all function
-app.get("/*", function (req, res) {
-  res.send("Server is running correctly!");
+app.get("/*", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
 app.listen(port, () => {
