@@ -17,6 +17,8 @@ const inventorySchema = new Schema(
       required: true,
       default: 0,
       min: [0, "Price must be positive"],
+      set: (value) => parseFloat(value.toFixed(2)),
+      get: (value) => value.toFixed(2),
     },
     //userid with isOwner: true
     userId: {
@@ -27,6 +29,8 @@ const inventorySchema = new Schema(
   },
   {
     timestamps: true,
+    toJSON: { getters: true },
+    toObject: { getters: true },
   }
 );
 
