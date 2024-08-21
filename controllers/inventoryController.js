@@ -17,7 +17,7 @@ const createInventory = async (req, res) => {
 
 //function to get inventory of a specific userId
 const inventoryIndexByUserId = async (req, res) => {
-  const userId = req.user._id;
+  const { userId } = req.params;
   try {
     // Find all inventory items that have the specified userId
     const inventoryItems = await Inventory.find({ userId: userId }).exec();
@@ -74,8 +74,20 @@ const inventoryDelete = async (req, res) => {
   }
 };
 
+//function to fetch all inventories available for a customer
+const fullInventoryIndex = async (req, res) => {
+  try {
+    const fullInventoryItems = await Inventory.find();
+    res.status(200).json(fullInventoryItems);
+  } catch (error) {
+    console.error("Error fetching inventory:", error);
+    res.status(500).json({ message: "Failed to fetch inventory items" });
+  }
+};
+
 module.exports = {
   createInventory,
+  fullInventoryIndex,
   inventoryIndexByUserId,
   inventoryUpdate,
   inventoryDelete,
