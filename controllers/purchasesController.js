@@ -4,8 +4,8 @@ const USERID = "66c461aeb37f6ebeeddd3bbf"; //to be changed later on
 
 //function to create purchase
 const createPurchase = async (req, res) => {
-  const data = req.body;
-  console.log("createPurchase running (data)", data);
+  const userId = req.user._id;
+  const data = { ...req.body, userId };
   try {
     const newPurchase = await Purchase.create(data);
     res.json(newPurchase);

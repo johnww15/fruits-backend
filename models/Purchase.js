@@ -54,6 +54,29 @@ const purchaseSchema = new Schema(
   }
 );
 
-//potentially include middleware to update paidAt and fulfilledAt dates when toggled
+// Middleware to update 'paidAt' and 'fulfilledAt' fields
+purchaseSchema.pre("save", function (next) {
+  const purchase = this;
+
+  // Check if isPaid is modified
+  if (purchase.isModified("isPaid")) {
+    if (purchase.isPaid && !purchase.paidAt) {
+      purchase.paidAt = new Date();
+    } else if (!purchase.isPaid) {
+      purchase.paidAt = null; // resets if necessary
+    }
+  }
+
+  // Check if isFulfilled is modified
+  if (purchase.isModified("isFulfilled")) {
+    if (purchase.isFulfilled && !purchase.fulfilledAt) {
+      purchase.fulfilledAt = new Date();
+    } else if (!purchase.isFulfilled) {
+      purchase.fulfilledAt = null; // resets if necessary
+    }
+  }
+
+  next();
+});
 
 module.exports = model("Purchase", purchaseSchema);
