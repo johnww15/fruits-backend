@@ -1,7 +1,7 @@
 const Purchase = require("../models/Purchase");
 
 //function to create purchase
-const createPurchase = async (req, res) => {
+const purchaseCreate = async (req, res) => {
   const userId = req.user._id;
   const data = { ...req.body, userId };
   try {
@@ -20,7 +20,7 @@ const purchaseIndexByUserId = async (req, res) => {
   try {
     // Find all purchase items that have the specified userId
     const purchaseItems = await Purchase.find({ userId: userId }).exec();
-    
+
     if (purchaseItems.length > 0) {
       res.json(purchaseItems);
     } else {
@@ -32,7 +32,29 @@ const purchaseIndexByUserId = async (req, res) => {
   }
 };
 
+//function to delete existing purchase item
+const purchaseDelete = async (req, res) => {
+  const { purchaseId } = req.params;
+
+  try {
+    const deletedItem = await Purchase.findByIdAndDelete(purchaseId);
+
+    if (!deletedItem) {
+      return res.status(404).json({ message: "Purchase item not found" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Purchase item deleted successfully" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error deleting purchase item", error });
+  }
+};
+
 module.exports = {
-  createPurchase,
+  purchaseCreate,
   purchaseIndexByUserId,
+  purchaseDelete,
 };
