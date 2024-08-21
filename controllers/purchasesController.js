@@ -1,7 +1,5 @@
 const Purchase = require("../models/Purchase");
 
-const USERID = "66c461aeb37f6ebeeddd3bbf"; //to be changed later on
-
 //function to create purchase
 const createPurchase = async (req, res) => {
   const userId = req.user._id;
@@ -15,6 +13,26 @@ const createPurchase = async (req, res) => {
   }
 };
 
+//function to fetch all purchase data entries by specific userId
+//need to filter out paid entries later on
+const purchaseIndexByUserId = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    // Find all purchase items that have the specified userId
+    const purchaseItems = await Purchase.find({ userId: userId }).exec();
+    
+    if (purchaseItems.length > 0) {
+      res.json(purchaseItems);
+    } else {
+      res.status(404).send("No Purchase items found for this user");
+    }
+  } catch (error) {
+    console.error("Error fetching inventory:", error);
+    res.status(500).send("Server error");
+  }
+};
+
 module.exports = {
   createPurchase,
+  purchaseIndexByUserId,
 };
