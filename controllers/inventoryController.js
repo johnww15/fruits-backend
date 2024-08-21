@@ -53,8 +53,30 @@ const inventoryUpdate = async (req, res) => {
   }
 };
 
+//function to delete existing inventory item
+const inventoryDelete = async (req, res) => {
+  const { inventoryId } = req.params;
+
+  try {
+    const deletedItem = await Inventory.findByIdAndDelete(inventoryId);
+
+    if (!deletedItem) {
+      return res.status(404).json({ message: "Inventory item not found" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Inventory item deleted successfully" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error deleting inventory item", error });
+  }
+};
+
 module.exports = {
   createInventory,
   inventoryIndexByUserId,
   inventoryUpdate,
+  inventoryDelete,
 };
