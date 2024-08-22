@@ -15,7 +15,7 @@ const purchaseCreate = async (req, res) => {
 
 //function to fetch all purchase data entries by specific userId
 //need to filter out paid entries later on
-const purchaseIndexByUserId = async (req, res) => {
+const purchaseIndexByBuyerId = async (req, res) => {
   const { buyerId } = req.params;
   try {
     // Find all purchase items that have the specified userId
@@ -75,7 +75,7 @@ const purchaseUpdatePaid = async (req, res) => {
 
 module.exports = {
   purchaseCreate,
-  purchaseIndexByUserId,
+  purchaseIndexByBuyerId,
   purchaseDelete,
   purchaseUpdatePaid,
 };
