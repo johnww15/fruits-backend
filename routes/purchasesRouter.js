@@ -3,8 +3,8 @@ const router = express.Router();
 const purchasesController = require("../controllers/purchasesController");
 
 router.post("/", purchasesController.purchaseCreate);
-router.get("/:userId", purchasesController.purchaseIndexByUserId);
+router.get("/:buyerId", purchasesController.purchaseIndexByUserId);
 router.delete("/:purchaseId", purchasesController.purchaseDelete);
-router.put("/update/:userId", purchasesController.purchaseUpdatePaid);
+router.put("/update/:buyerId", purchasesController.purchaseUpdatePaid);
 
 module.exports = router;

@@ -2,8 +2,8 @@ const Purchase = require("../models/Purchase");
 
 //function to create purchase
 const purchaseCreate = async (req, res) => {
-  const userId = req.user._id;
-  const data = { ...req.body, userId };
+  const buyerId = req.user._id;
+  const data = { ...req.body, buyerId };
   try {
     const newPurchase = await Purchase.create(data);
     res.json(newPurchase);
@@ -16,11 +16,11 @@ const purchaseCreate = async (req, res) => {
 //function to fetch all purchase data entries by specific userId
 //need to filter out paid entries later on
 const purchaseIndexByUserId = async (req, res) => {
-  const { userId } = req.params;
+  const { buyerId } = req.params;
   try {
     // Find all purchase items that have the specified userId
     const purchaseItems = await Purchase.find({
-      userId: userId,
+      buyerId: buyerId,
       isPaid: false,
     }).exec();
 
@@ -58,10 +58,10 @@ const purchaseDelete = async (req, res) => {
 
 //function to update entries to isPaid = true
 const purchaseUpdatePaid = async (req, res) => {
-  const { userId } = req.params;
+  const { buyerId } = req.params;
   try {
     const result = await Purchase.updateMany(
-      { userId, isPaid: false },
+      { buyerId, isPaid: false },
       { $set: { isPaid: true } }
     );
 

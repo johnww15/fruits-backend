@@ -35,7 +35,13 @@ const purchaseSchema = new Schema(
       type: Date,
     },
     //userid with isOwner: false
-    userId: {
+    buyerId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    //userid with isOwner: true
+    sellerId: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
