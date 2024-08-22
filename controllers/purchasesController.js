@@ -13,12 +13,11 @@ const purchaseCreate = async (req, res) => {
   }
 };
 
-//function to fetch all purchase data entries by specific userId
-//need to filter out paid entries later on
+//function to fetch all purchase data entries by specific buyerId
 const purchaseIndexByBuyerId = async (req, res) => {
   const { buyerId } = req.params;
   try {
-    // Find all purchase items that have the specified userId
+    // Find all purchase items that have the specified buyerId
     const purchaseItems = await Purchase.find({
       buyerId: buyerId,
       isPaid: false,
@@ -73,9 +72,47 @@ const purchaseUpdatePaid = async (req, res) => {
   }
 };
 
+//function to fetch all purchase data entries by specific sellerId
+const purchaseIndexBySellerId = async (req, res) => {
+  const { sellerId } = req.params;
+  try {
+    // Find all purchase items that have the specified sellerId
+    const purchaseItems = await Purchase.find({
+      sellerId: sellerId,
+      isPaid: true,
+      isFulfilled: false,
+    }).exec();
+
+    if (purchaseItems.length > 0) {
+      res.json(purchaseItems);
+    } else {
+      res.json({ message: "No items found" });
+    }
+  } catch (error) {
+    console.error("Error fetching inventory:", error);
+    res.status(500).send("Server error");
+  }
+};
+
+const purchaseUpdateFulfilled = async (req, res) => {
+  const { purchaseId } = req.params;
+  try {
+    const purchase = await Purchase.findOne({ _id: purchaseId });
+    purchase.isFulfilled = true;
+    await purchase.save();
+    res.status(200).json({
+      message: `Updated unfulfilled purchase to isFulfilled: true`,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating purchases", error });
+  }
+};
+
 module.exports = {
   purchaseCreate,
   purchaseIndexByBuyerId,
   purchaseDelete,
   purchaseUpdatePaid,
+  purchaseIndexBySellerId,
+  purchaseUpdateFulfilled,
 };
