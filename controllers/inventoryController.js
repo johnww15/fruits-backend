@@ -1,7 +1,5 @@
 const Inventory = require("../models/Inventory");
 
-const USERID = "66c4d08f9b400680a4144e94"; //(shop) to be changed later on
-
 //function to create inventory
 const inventoryCreate = async (req, res) => {
   const userId = req.user._id;

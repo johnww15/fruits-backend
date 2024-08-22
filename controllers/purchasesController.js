@@ -19,12 +19,15 @@ const purchaseIndexByUserId = async (req, res) => {
   const { userId } = req.params;
   try {
     // Find all purchase items that have the specified userId
-    const purchaseItems = await Purchase.find({ userId: userId }).exec();
+    const purchaseItems = await Purchase.find({
+      userId: userId,
+      isPaid: false,
+    }).exec();
 
     if (purchaseItems.length > 0) {
       res.json(purchaseItems);
     } else {
-      res.status(404).send("No Purchase items found for this user");
+      res.json({ message: "No items found" });
     }
   } catch (error) {
     console.error("Error fetching inventory:", error);
@@ -53,8 +56,26 @@ const purchaseDelete = async (req, res) => {
   }
 };
 
+//function to update entries to isPaid = true
+const purchaseUpdatePaid = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const result = await Purchase.updateMany(
+      { userId, isPaid: false },
+      { $set: { isPaid: true } }
+    );
+
+    res.status(200).json({
+      message: `Updated unpaid purchases to isPaid: true`,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating purchases", error });
+  }
+};
+
 module.exports = {
   purchaseCreate,
   purchaseIndexByUserId,
   purchaseDelete,
+  purchaseUpdatePaid,
 };
