@@ -20,6 +20,17 @@ const inventorySchema = new Schema(
       set: (value) => parseFloat(value.toFixed(2)),
       get: (value) => value.toFixed(2),
     },
+    sold: {
+      type: Number,
+      default: 0,
+      min: [0, "Quantity must be positive"],
+      validate: {
+        validator: function (value) {
+          return value <= this.quantity;
+        },
+        message: "Sold quantity cannot be greater than quantity available",
+      },
+    },
     //userid with isOwner: true
     userId: {
       type: Schema.Types.ObjectId,
@@ -33,5 +44,17 @@ const inventorySchema = new Schema(
     toObject: { getters: true },
   }
 );
+
+// inventorySchema.pre("updateOne", async function (next) {
+//   const update = this.getUpdate();
+//   console.log("middleware activated");
+//   if (update.$inc && update.$inc.sold) {
+//     const inventory = await this.model.findById(this.getQuery()._id);
+//     if (inventory.sold + update.$inc.sold > inventory.quantity) {
+//       return next(new Error("Sold quantity cannot exceed available quantity."));
+//     }
+//   }
+//   next();
+// });
 
 module.exports = model("Inventory", inventorySchema);

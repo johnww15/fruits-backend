@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const mongoose = require("mongoose");
 
 const purchaseSchema = new Schema(
   {
@@ -61,13 +62,25 @@ const purchaseSchema = new Schema(
 );
 
 // Middleware to update 'paidAt' and 'fulfilledAt' fields
-purchaseSchema.pre("save", function (next) {
+purchaseSchema.pre("save", async function (next) {
   const purchase = this;
 
   // Check if isPaid is modified
   if (purchase.isModified("isPaid")) {
     if (purchase.isPaid && !purchase.paidAt) {
       purchase.paidAt = new Date();
+      if (purchase.isPaid && purchase.inventoryId) {
+        try {
+          await mongoose
+            .model("Inventory")
+            .updateOne(
+              { _id: purchase.inventoryId },
+              { $inc: { sold: purchase.quantity } }
+            );
+        } catch (error) {
+          console.error("Error updating Inventory:", error);
+        }
+      }
     } else if (!purchase.isPaid) {
       purchase.paidAt = null; // resets if necessary
     }

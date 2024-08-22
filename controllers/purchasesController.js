@@ -1,4 +1,5 @@
 const Purchase = require("../models/Purchase");
+const Inventory = require("../models/Inventory");
 
 //function to create purchase
 const purchaseCreate = async (req, res) => {
@@ -59,10 +60,22 @@ const purchaseDelete = async (req, res) => {
 const purchaseUpdatePaid = async (req, res) => {
   const { buyerId } = req.params;
   try {
-    const result = await Purchase.updateMany(
-      { buyerId, isPaid: false },
-      { $set: { isPaid: true } }
-    );
+    const purchases = await Purchase.find({ buyerId: buyerId, isPaid: false });
+
+    // Iterate through each purchase
+    for (let purchase of purchases) {
+      //check quantity against existing inventory quantity
+      const inventory = await Inventory.findById(purchase.inventoryId);
+      if (inventory) {
+        if (inventory.sold + purchase.quantity > inventory.quantity) {
+          return res
+            .status(400)
+            .json({ message: "purchase quantity exceeds current inventory" });
+        }
+      }
+      purchase.isPaid = true;
+      await purchase.save();
+    }
 
     res.status(200).json({
       message: `Updated unpaid purchases to isPaid: true`,
