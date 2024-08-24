@@ -107,6 +107,7 @@ const purchaseIndexBySellerId = async (req, res) => {
   }
 };
 
+//function to update isFulfilled status of purchase to true
 const purchaseUpdateFulfilled = async (req, res) => {
   const { purchaseId } = req.params;
   try {
@@ -121,6 +122,7 @@ const purchaseUpdateFulfilled = async (req, res) => {
   }
 };
 
+// function to fetch all past purchases of a specific buyerId
 const purchaseIndexByBuyerIdForHistoryList = async (req, res) => {
   const { buyerId } = req.params;
   try {
@@ -128,7 +130,53 @@ const purchaseIndexByBuyerIdForHistoryList = async (req, res) => {
     const purchaseItems = await Purchase.find({
       buyerId: buyerId,
       isPaid: true,
-    }).exec();
+    })
+      .sort({ paidAt: -1 })
+      .exec();
+
+    if (purchaseItems.length > 0) {
+      res.json(purchaseItems);
+    } else {
+      res.json({ message: "No items found" });
+    }
+  } catch (error) {
+    console.error("Error fetching inventory:", error);
+    res.status(500).send("Server error");
+  }
+};
+
+//function to fetch all purchase data entries by specific inventoryId for this current month
+const purchaseIndexByInventoryId = async (req, res) => {
+  const sellerId = req.user._id;
+  const { inventoryId } = req.params;
+
+  // Get the current date
+  const currentDate = new Date();
+
+  // Calculate the first and last day of the current month
+  const firstDayOfMonth = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    1
+  );
+  const lastDayOfMonth = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth() + 1,
+    0
+  );
+
+  try {
+    // Find all purchase items that have the specified sellerId and fall within the current month
+    const purchaseItems = await Purchase.find({
+      inventoryId: inventoryId,
+      sellerId: sellerId,
+      createdAt: {
+        $gte: firstDayOfMonth,
+        $lte: lastDayOfMonth,
+      },
+    })
+      .sort({ paidAt: -1 })
+      .exec();
 
     if (purchaseItems.length > 0) {
       res.json(purchaseItems);
@@ -149,4 +197,5 @@ module.exports = {
   purchaseIndexBySellerId,
   purchaseUpdateFulfilled,
   purchaseIndexByBuyerIdForHistoryList,
+  purchaseIndexByInventoryId,
 };

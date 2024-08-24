@@ -15,5 +15,9 @@ router.get(
   "/history/:buyerId",
   purchasesController.purchaseIndexByBuyerIdForHistoryList
 );
+router.get(
+  "/inventory/:inventoryId",
+  purchasesController.purchaseIndexByInventoryId
+);
 
 module.exports = router;
