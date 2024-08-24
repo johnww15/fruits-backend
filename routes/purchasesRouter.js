@@ -11,5 +11,9 @@ router.put(
   "/update/shop/:purchaseId",
   purchasesController.purchaseUpdateFulfilled
 );
+router.get(
+  "/history/:buyerId",
+  purchasesController.purchaseIndexByBuyerIdForHistoryList
+);
 
 module.exports = router;

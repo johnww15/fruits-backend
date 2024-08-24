@@ -121,6 +121,26 @@ const purchaseUpdateFulfilled = async (req, res) => {
   }
 };
 
+const purchaseIndexByBuyerIdForHistoryList = async (req, res) => {
+  const { buyerId } = req.params;
+  try {
+    // Find all purchase items that have the specified buyerId and isPaid:true
+    const purchaseItems = await Purchase.find({
+      buyerId: buyerId,
+      isPaid: true,
+    }).exec();
+
+    if (purchaseItems.length > 0) {
+      res.json(purchaseItems);
+    } else {
+      res.json({ message: "No items found" });
+    }
+  } catch (error) {
+    console.error("Error fetching inventory:", error);
+    res.status(500).send("Server error");
+  }
+};
+
 module.exports = {
   purchaseCreate,
   purchaseIndexByBuyerId,
@@ -128,4 +148,5 @@ module.exports = {
   purchaseUpdatePaid,
   purchaseIndexBySellerId,
   purchaseUpdateFulfilled,
+  purchaseIndexByBuyerIdForHistoryList,
 };
