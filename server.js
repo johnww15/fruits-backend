@@ -20,7 +20,7 @@ const inventoryRouter = require("./routes/inventoryRouter");
 
 app.use(
   cors({
-    origin: "http://localhost:5173", //handle request from correct frontend url
+    origin: "https://fruits-frontend.vercel.app", //handle request from correct frontend url
   })
 );
 app.use(express.json());
@@ -33,7 +33,7 @@ app.use("/api/inventory", inventoryRouter);
 
 //catch all function
 app.get("/*", (req, res) => {
-  res.sendFile(path.join(__dirname, "dist", "index.html"));
+  res.redirect("https://fruits-frontend.vercel.app");
 });
 
 app.listen(port, () => {
